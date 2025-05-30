@@ -47,3 +47,5 @@ Optimizer: Adam
 Batch Size: 32
 
 Epochs: 10
+
+
