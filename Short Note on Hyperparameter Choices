@@ -1,0 +1,13 @@
+For this pneumonia detection project using transfer learning with ResNet-50, the following hyperparameters were used:
+
+Learning Rate: Set to 0.001 to ensure stable convergence while fine-tuning the model.
+
+Batch Size: A batch size of 32 was selected to balance memory usage and learning efficiency.
+
+Epochs: The model was trained for 10 epochs, which was sufficient to achieve good performance without overfitting.
+
+Optimizer: Adam optimizer was used due to its adaptability and faster convergence.
+
+Class Weights: Applied to handle class imbalance, ensuring the model learns effectively from both normal and pneumonia cases.
+
+These parameters were chosen to achieve robust performance while maintaining training stability on a medical imaging dataset.
