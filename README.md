@@ -1,58 +1,68 @@
-# Objective
-# The main goal of this project is to leverage transfer learning by adapting a ResNet-50 model to classify chest X-ray images and accurately identify cases of pneumonia. The challenge lies in dealing with potential class imbalance and ensuring that the model generalizes well to unseen data.
+# Pneumonia Detection using ResNet-50 (Transfer Learning)
 
-⚙️ Training Strategy
-# Data Augmentation
-# To help the model generalize better and reduce the risk of overfitting, data augmentation techniques were applied to the training images:
+## 🎯 Objective
 
-# Random horizontal flipping
+The objective of this project is to fine-tune a **ResNet-50** convolutional neural network to classify chest X-ray images as either **Normal** or **Pneumonia**, and to evaluate the model's performance using appropriate metrics. The task emphasizes handling **class imbalance**, improving **generalization**, and presenting clear **evaluation strategies**.
 
-# Small random rotations
+---
 
-# Resizing to 224×224 (required by ResNet-50 input)
+## 📦 Dataset: PneumoniaMNIST
 
-# Class Imbalance Handling
-# The dataset shows some imbalance between the Normal and Pneumonia classes. To address this:
+- **Source**: MedMNIST v2 (https://medmnist.com/)
+- **Type**: Binary classification (Normal vs. Pneumonia)
+- **Format**: `.npz` file with grayscale 28×28 images
+- **Splits**:
+  - Training set
+  - Validation set
+  - Test set
 
-# We computed class weights using sklearn.utils.class_weight.
+---
 
-# These weights were passed to the CrossEntropyLoss function to penalize the model more for misclassifying underrepresented classes.
+## 🔧 Task Details
 
-# Optimization
-# Optimizer: Adam
+### 1. 🔁 Transfer Learning
 
-# Learning Rate: 0.001
+- **Base Model**: ResNet-50 pre-trained on ImageNet
+- **Modifications**:
+  - Replaced final layer with custom classifier: `Linear → ReLU → Dropout → Linear`
+  - Only trained the final layers while freezing earlier convolutional blocks
 
-# Loss Function: CrossEntropyLoss (with class weights)
+---
 
-# Batch Size: 32
+### 2. ✅ Evaluation Strategy
 
-# Epochs: 10
+#### a) Metrics Used:
+- **Accuracy**: Measures overall correctness.
+- **Precision & Recall**: Crucial due to class imbalance.
+- **F1-Score**: Harmonic mean of precision and recall for balanced evaluation.
 
-📊 Evaluation Metrics
-# Three key metrics were used to evaluate model performance:
+#### b) Handling Class Imbalance:
+- Applied `class_weight='balanced'` using Scikit-learn to calculate weights for `CrossEntropyLoss`.
+- This penalizes misclassification of minority classes appropriately during training.
 
-# Metric	Reason
-# Accuracy	General performance across all classes.
-# Precision	Important for minimizing false positives, especially in medical tasks.
-# F1-Score	Balanced view of precision and recall in case of class imbalance.
+#### c) Overfitting Prevention Techniques:
+- **Data Augmentation**:
+  - Random horizontal flip
+  - Random rotation
+- **Regularization**:
+  - Dropout layer added in the classifier
+- **Early Stopping**:
+  - Model saved only if validation accuracy improved
 
-✅ Results
-# After training the model on Google Colab using GPU acceleration:
+---
 
-# Test Accuracy: ~82%
+## 🧠 Model Architecture
 
-# Classification Report:
-
-# makefile
-# Copy
-# Edit
-# Precision: 0.82
-# Recall:    0.91
-# F1-Score:  0.87 (Pneumonia)
-# Confusion Matrix showed strong recall for pneumonia cases, which is desirable in clinical scenarios.
-📂 Repository Contents
-├── pneumonia_model_training.ipynb   # Training and evaluation notebook
-├── best_model.pt                    # Trained model weights
-├── requirements.txt                 # Python dependencies
-├── README.md                        # Project documentation
+```python
+model.fc = nn.Sequential(
+    nn.Linear(model.fc.in_features, 256),
+    nn.ReLU(),
+    nn.Dropout(0.4),
+    nn.Linear(256, 2)
+)
+ Hyperparameters
+Parameter	Value
+Learning Rate	0.001
+Batch Size	32
+Epochs	10
+Optimizer	Adam
