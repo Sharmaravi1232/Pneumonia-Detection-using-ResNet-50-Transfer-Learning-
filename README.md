@@ -1,68 +1,49 @@
-# Pneumonia Detection using ResNet-50 (Transfer Learning)
+Pneumonia Detection using ResNet-50 and Transfer Learning
+This project applies transfer learning using a pre-trained ResNet-50 model to detect pneumonia from chest X-ray images. The model is fine-tuned on the PneumoniaMNIST dataset, a subset of the MedMNIST collection, designed for binary classification: Normal vs Pneumonia.
 
-## 🎯 Objective
+🔍 Project Highlights
+Utilizes ResNet-50, a deep convolutional neural network pre-trained on ImageNet.
 
-The objective of this project is to fine-tune a **ResNet-50** convolutional neural network to classify chest X-ray images as either **Normal** or **Pneumonia**, and to evaluate the model's performance using appropriate metrics. The task emphasizes handling **class imbalance**, improving **generalization**, and presenting clear **evaluation strategies**.
+.Tailored for binary medical image classification.
 
----
+.Incorporates techniques to handle class imbalance, including class weighting.
 
-## 📦 Dataset: PneumoniaMNIST
+. Includes data augmentation and dropout to mitigate overfitting.
 
-- **Source**: MedMNIST v2 (https://medmnist.com/)
-- **Type**: Binary classification (Normal vs. Pneumonia)
-- **Format**: `.npz` file with grayscale 28×28 images
-- **Splits**:
-  - Training set
-  - Validation set
-  - Test set
+. Evaluated with multiple metrics: Accuracy, Precision, Recall, F1-score.
 
----
+📁 Dataset: PneumoniaMNIST
+Source: MedMNIST v2
 
-## 🔧 Task Details
+.Format: .npz file containing 28×28 grayscale chest X-ray images.
 
-### 1. 🔁 Transfer Learning
+.Classes: Normal (0) and Pneumonia (1)
 
-- **Base Model**: ResNet-50 pre-trained on ImageNet
-- **Modifications**:
-  - Replaced final layer with custom classifier: `Linear → ReLU → Dropout → Linear`
-  - Only trained the final layers while freezing earlier convolutional blocks
+.Splits:
 
----
+.Training Set
 
-### 2. ✅ Evaluation Strategy
+.Validation Set
 
-#### a) Metrics Used:
-- **Accuracy**: Measures overall correctness.
-- **Precision & Recall**: Crucial due to class imbalance.
-- **F1-Score**: Harmonic mean of precision and recall for balanced evaluation.
+.Test Set
 
-#### b) Handling Class Imbalance:
-- Applied `class_weight='balanced'` using Scikit-learn to calculate weights for `CrossEntropyLoss`.
-- This penalizes misclassification of minority classes appropriately during training.
+🧠 Model Architecture
+We fine-tuned the ResNet-50 model by freezing the convolutional layers and modifying the classifier head as follows:
 
-#### c) Overfitting Prevention Techniques:
-- **Data Augmentation**:
-  - Random horizontal flip
-  - Random rotation
-- **Regularization**:
-  - Dropout layer added in the classifier
-- **Early Stopping**:
-  - Model saved only if validation accuracy improved
-
----
-
-## 🧠 Model Architecture
-
-```python
+python
+Copy
+Edit
 model.fc = nn.Sequential(
     nn.Linear(model.fc.in_features, 256),
     nn.ReLU(),
     nn.Dropout(0.4),
     nn.Linear(256, 2)
 )
- Hyperparameters
-Parameter	Value
-Learning Rate	0.001
-Batch Size	32
-Epochs	10
-Optimizer	Adam
+
+Loss Function: CrossEntropyLoss with class weights.
+
+Optimizer: Adam
+
+Batch Size: 32
+
+Epochs: 10
